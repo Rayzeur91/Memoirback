@@ -90,7 +90,7 @@ CSS STRUCTURE:
 :root {
     /* widths for rows and containers
        */
-    --header-height: 160px;
+    --header-height: 140px;
     --header-height-min: 80px;
   }
   
@@ -462,7 +462,7 @@ CSS STRUCTURE:
     border: 1px solid rgba(65, 64, 62, 0.20);
     background: #FFF;
     display: flex;
-    padding: 1.25rem 0rem 1.25rem 1.25rem;
+    padding: 1.0rem 0rem 1.0rem 1.0rem;
     align-items: center;
     gap: 0.375rem;
     align-self: stretch;
@@ -674,4 +674,4 @@ CSS STRUCTURE:
     color: var(--light-color);
     background-color: var(--accent-color);
   }
-  
+  /* Add this CSS to your stylesheet */

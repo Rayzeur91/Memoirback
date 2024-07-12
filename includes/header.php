@@ -1,16 +1,21 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Waggy - Free eCommerce Pet Shop HTML Website Template</title>
+    <title>Ecommerce</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="author" content="TemplatesJungle">
+    <meta name="author" content="">
     <meta name="keywords" content="ecommerce, pet, shop">
-    <meta name="description" content="Free eCommerce Pet Shop HTML Website Template">
+    <meta name="description" content="">
 </head>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
@@ -25,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chilanka&amp;family=Montserrat:wght@300;400;500&amp;display=swap"
     rel="stylesheet">
-
+<script src="https://js.stripe.com/v3/"></script> <!-- Stripe JS -->
 </head>
 
 <body>
@@ -109,37 +114,35 @@
             <div class="order-md-last">
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-primary">Your cart</span>
-                    <span class="badge bg-primary rounded-circle pt-2">3</span>
+                    <span class="badge bg-primary rounded-circle pt-2">
+                        <?php echo isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0; ?>
+                    </span>
                 </h4>
                 <ul class="list-group mb-3">
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Grey Hoodie</h6>
-                            <small class="text-body-secondary">Brief description</small>
-                        </div>
-                        <span class="text-body-secondary">$12</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Dog Food</h6>
-                            <small class="text-body-secondary">Brief description</small>
-                        </div>
-                        <span class="text-body-secondary">$8</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Soft Toy</h6>
-                            <small class="text-body-secondary">Brief description</small>
-                        </div>
-                        <span class="text-body-secondary">$5</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span class="fw-bold">Total (USD)</span>
-                        <strong>$20</strong>
-                    </li>
+                    <?php
+                $total = 0;
+                if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+                    foreach ($_SESSION['cart'] as $item) {
+                        $total += $item['price'] * $item['quantity'];
+                        echo '<li class="list-group-item d-flex justify-content-between lh-sm">';
+                        echo '<div>';
+                        echo '<h6 class="my-0">' . $item['name'] . '</h6>';
+                        echo '<small class="text-body-secondary">Quantity: ' . $item['quantity'] . '</small>';
+                        echo '</div>';
+                        echo '<span class="text-body-secondary">$' . number_format($item['price'] * $item['quantity'], 2) . '</span>';
+                        echo '</li>';
+                    }
+                    echo '<li class="list-group-item d-flex justify-content-between">';
+                    echo '<span class="fw-bold">Total (USD)</span>';
+                    echo '<strong>$' . number_format($total, 2) . '</strong>';
+                    echo '</li>';
+                } else {
+                    echo '<li class="list-group-item">Your cart is empty.</li>';
+                }
+                ?>
                 </ul>
-
-                <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
+                <a href="checkout.php" class="w-100 btn btn-primary btn-lg">Continue to checkout</a>
+                <a href="cart.php" class="w-100 btn btn-outline-primary btn-lg mt-3">View my cart</a>
             </div>
         </div>
     </div>
@@ -169,41 +172,15 @@
         <div class="container py-2">
             <div class="row py-4 pb-0 pb-sm-4 align-items-center ">
 
-                <div class="col-sm-4 col-lg-3 text-center text-sm-start">
+                <div class="col-sm-12 col-lg-12 text-center">
                     <div class="main-logo">
-                        <a href="index.html">
+                        <a href="index.php">
                             <img src="images/logo.png" alt="logo" class="img-fluid">
                         </a>
                     </div>
                 </div>
 
-                <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
-                    <div class="search-bar border rounded-2 px-3 border-dark-subtle">
-                        <form id="search-form" class="text-center d-flex align-items-center" action="#" method="">
-                            <input type="text" class="form-control border-0 bg-transparent"
-                                placeholder="Search for more than 10,000 products" />
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                    d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z" />
-                            </svg>
-                        </form>
-                    </div>
-                </div>
 
-                <div
-                    class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
-                    <div class="support-box text-end d-none d-xl-block">
-                        <span class="fs-6 secondary-font text-muted">Phone</span>
-                        <h5 class="mb-0">+980-34984089</h5>
-                    </div>
-                    <div class="support-box text-end d-none d-xl-block">
-                        <span class="fs-6 secondary-font text-muted">Email</span>
-                        <h5 class="mb-0">waggy@gmail.com</h5>
-                    </div>
-
-
-
-                </div>
             </div>
         </div>
 
@@ -212,41 +189,47 @@
         </div>
 
         <div class="container">
+
+            <!-- mobile navigation top bar -->
             <nav class="main-menu d-flex navbar navbar-expand-lg ">
+
 
                 <div class="d-flex d-lg-none align-items-end mt-3">
                     <ul class="d-flex justify-content-end list-unstyled m-0">
                         <li>
-                            <a href="account.html" class="mx-3">
+                            <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true) : ?>
+                            <a href="account.php" class="mx-1">
                                 <iconify-icon icon="healthicons:person" class="fs-4"></iconify-icon>
+
                             </a>
-                        </li>
-                        <li>
-                            <a href="wishlist.html" class="mx-3">
-                                <iconify-icon icon="mdi:heart" class="fs-4"></iconify-icon>
+                            <a href="logout.php" class="mx-1">
+                                <iconify-icon icon="mdi:logout" class="fs-4"></iconify-icon>
+                                <span class="mx-1">Logout</span>
                             </a>
+                            <?php else : ?>
+                            <a href="account.php" class="mx-1">
+                                <iconify-icon icon="mdi:login" class="fs-4"></iconify-icon>
+                                <span class="mx-1">Login</span>
+                            </a>
+                            <a href="account.php" class="mx-1">
+                                <iconify-icon icon="mdi:account-plus" class="fs-4"></iconify-icon>
+                                <span class="mx-1">Register</span>
+                            </a>
+                            <?php endif; ?>
                         </li>
 
                         <li>
                             <a href="#" class="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
                                 aria-controls="offcanvasCart">
                                 <iconify-icon icon="mdi:cart" class="fs-4 position-relative"></iconify-icon>
-                                <span class="position-absolute translate-middle badge rounded-circle bg-primary pt-2">
-                                    03
-                                </span>
+                                <span
+                                    class="position-absolute translate-middle badge rounded-circle bg-primary pt-2">03</span>
                             </a>
                         </li>
 
-                        <li>
-                            <a href="#" class="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSearch"
-                                aria-controls="offcanvasSearch">
-                                <iconify-icon icon="tabler:search" class="fs-4"></iconify-icon>
-                                </span>
-                            </a>
-                        </li>
                     </ul>
-
                 </div>
+
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
@@ -265,43 +248,10 @@
 
                         <ul class="navbar-nav menu-list list-unstyled d-flex gap-md-3 mb-0">
                             <li class="nav-item">
-                                <a href="index.html" class="nav-link active">Home</a>
+                                <a href="index.php" class="nav-link active">Home</a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" role="button" id="pages" data-bs-toggle="dropdown"
-                                    aria-expanded="false">Pages</a>
-                                <ul class="dropdown-menu" aria-labelledby="pages">
-                                    <li><a href="about.html" class="dropdown-item">About Us<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="shop.html" class="dropdown-item">Shop<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="single-product.html" class="dropdown-item">Single Product<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="cart.html" class="dropdown-item">Cart<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="wishlist.html" class="dropdown-item">Wishlist<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="checkout.html" class="dropdown-item">Checkout<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="blog.html" class="dropdown-item">Blog<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="single-post.html" class="dropdown-item">Single Post<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="contact.html" class="dropdown-item">Contact<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="faqs.html" class="dropdown-item">FAQs<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="account.html" class="dropdown-item">Account<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="thank-you.html" class="dropdown-item">Thankyou<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="error.html" class="dropdown-item">Error 404<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                    <li><a href="styles.html" class="dropdown-item">Styles<span
-                                                class="badge bg-success text-dark ms-2">PRO</span></a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
+
+                            <!-- <li class="nav-item">
                                 <a href="shop.html" class="nav-link">Shop</a>
                             </li>
                             <li class="nav-item">
@@ -312,25 +262,35 @@
                             </li>
                             <li class="nav-item">
                                 <a href="#" class="nav-link">Others</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://templatesjungle.gumroad.com/l/waggy-pet-shop-ecommerce-html-website-template"
-                                    class="nav-link fw-bold text-dark" target="_blank">GET PRO</a>
-                            </li>
+                            </li> -->
+
                         </ul>
 
                         <div class="d-none d-lg-flex align-items-end">
                             <ul class="d-flex justify-content-end list-unstyled m-0">
+
                                 <li>
-                                    <a href="account.html" class="mx-3">
+                                    <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true) : ?>
+                                    <a href="profile.php" class="mx-3">
                                         <iconify-icon icon="healthicons:person" class="fs-4"></iconify-icon>
+                                        <span class="mx-1">Welcome, <?php echo $_SESSION['username']; ?></span>
                                     </a>
-                                </li>
-                                <li>
-                                    <a href="wishlist.html" class="mx-3">
-                                        <iconify-icon icon="mdi:heart" class="fs-4"></iconify-icon>
+                                    <a href="logout.php" class="mx-3">
+                                        <iconify-icon icon="mdi:logout" class="fs-4"></iconify-icon>
+                                        <span class="mx-1">Logout</span>
                                     </a>
+                                    <?php else : ?>
+                                    <a href="account.php" class="mx-3">
+                                        <iconify-icon icon="mdi:login" class="fs-4"></iconify-icon>
+                                        <span class="mx-1">Login</span>
+                                    </a>
+                                    <a href="account.php" class="mx-3">
+                                        <iconify-icon icon="mdi:account-plus" class="fs-4"></iconify-icon>
+                                        <span class="mx-1">Register</span>
+                                    </a>
+                                    <?php endif; ?>
                                 </li>
+
 
                                 <li class="">
                                     <a href="#" class="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
@@ -338,10 +298,11 @@
                                         <iconify-icon icon="mdi:cart" class="fs-4 position-relative"></iconify-icon>
                                         <span
                                             class="position-absolute translate-middle badge rounded-circle bg-primary pt-2">
-                                            03
+                                            <?php echo isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0; ?>
                                         </span>
                                     </a>
                                 </li>
+
                             </ul>
 
                         </div>
